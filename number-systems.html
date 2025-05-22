@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Learn Number Systems</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f4f4f9;
+    }
+
+    h1, h2 {
+      color: #333;
+    }
+
+    section {
+      margin-bottom: 40px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    input[type="text"], input[type="number"] {
+      width: 200px;
+      padding: 5px;
+      margin-right: 10px;
+      font-size: 1em;
+    }
+
+    .output, .breakdown {
+      margin-top: 10px;
+      font-weight: bold;
+      white-space: pre-wrap;
+      font-family: monospace;
+    }
+
+    .breakdown {
+      background: #eef;
+      padding: 10px;
+      border-left: 4px solid #88f;
+    }
+
+    .footer {
+      margin-top: 8px;
+      font-style: italic;
+      color: #444;
+    }
+
+    .controls {
+      margin-top: 8px;
+    }
+
+    button {
+      padding: 5px 10px;
+      margin-top: 5px;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Interactive Number Systems Tutorial</h1>
+
+  <!-- Decimal -->
+  <section>
+    <h2>1. Decimal System (Base 10)</h2>
+    <p>The decimal system uses 10 digits (0–9) and powers of 10.</p>
+    <input type="text" id="decimalLiveInput" placeholder="Enter decimal number" oninput="showDecimalBreakdown()" />
+    <div class="breakdown" id="decimalBreakdown"></div>
+  </section>
+
+  <!-- Binary -->
+  <section>
+    <h2>2. Binary System (Base 2)</h2>
+    <p>Binary uses digits 0 and 1, with powers of 2.</p>
+    <input type="text" id="binaryLiveInput" placeholder="Enter binary number" oninput="showBinaryBreakdown()" />
+    <div class="breakdown" id="binaryBreakdown"></div>
+    <div class="footer" id="binarySummary"></div>
+  </section>
+
+  <!-- Hexadecimal -->
+  <section>
+    <h2>3. Hexadecimal System (Base 16)</h2>
+    <p>Hex uses digits 0–9 and A–F (A=10, B=11, ..., F=15).</p>
+    <input type="text" id="hexLiveInput" placeholder="Enter hex number" oninput="showHexBreakdown()" />
+    <div class="breakdown" id="hexBreakdown"></div>
+    <div class="footer" id="hexSummary"></div>
+  </section>
+
+  <script>
+    function showDecimalBreakdown() {
+      const input = document.getElementById("decimalLiveInput").value;
+      const output = document.getElementById("decimalBreakdown");
+
+      if (!/^\d+$/.test(input)) {
+        output.innerText = "Please enter a valid decimal number.";
+        return;
+      }
+
+      let breakdown = "";
+      const digits = input.split('').map(Number);
+      const len = digits.length;
+
+      digits.forEach((digit, index) => {
+        const power = len - index - 1;
+        breakdown += `${digit} × 10^${power} = ${digit * Math.pow(10, power)}\n`;
+      });
+
+      output.innerText = breakdown;
+    }
+
+    function showBinaryBreakdown() {
+      const input = document.getElementById("binaryLiveInput").value;
+      const output = document.getElementById("binaryBreakdown");
+      const summary = document.getElementById("binarySummary");
+
+      if (!/^[01]+$/.test(input)) {
+        output.innerText = "Please enter a valid binary number.";
+        summary.innerText = "";
+        return;
+      }
+
+      let breakdown = "";
+      const digits = input.split('').map(Number);
+      const len = digits.length;
+      let total = 0;
+      let highestValue = 0;
+
+      digits.forEach((digit, index) => {
+        const power = len - index - 1;
+        const value = digit * Math.pow(2, power);
+        breakdown += `${digit} × 2^${power} = ${value}\n`;
+        if (digit !== 0 && power > 0 && highestValue === 0) {
+          highestValue = Math.pow(2, power);
+        }
+        total += value;
+      });
+
+      output.innerText = breakdown;
+      summary.innerText = `Total (decimal): ${total}\nHighest place value: 2^${len - 1} = ${Math.pow(2, len - 1)}`;
+    }
+
+    function showHexBreakdown() {
+      const input = document.getElementById("hexLiveInput").value.toUpperCase();
+      const output = document.getElementById("hexBreakdown");
+      const summary = document.getElementById("hexSummary");
+
+      if (!/^[0-9A-F]+$/.test(input)) {
+        output.innerText = "Please enter a valid hexadecimal number.";
+        summary.innerText = "";
+        return;
+      }
+
+      let breakdown = "";
+      const hexToDec = ch => parseInt(ch, 16);
+      const len = input.length;
+      let total = 0;
+
+      input.split('').forEach((char, index) => {
+        const power = len - index - 1;
+        const value = hexToDec(char);
+        const decimalValue = value * Math.pow(16, power);
+        breakdown += `${char} (${value}) × 16^${power} = ${decimalValue}\n`;
+        total += decimalValue;
+      });
+
+      output.innerText = breakdown;
+      summary.innerText = `Total (decimal): ${total}\nHighest place value: 16^${len - 1} = ${Math.pow(16, len - 1)}`;
+    }
+  </script>
+</body>
+</html>
